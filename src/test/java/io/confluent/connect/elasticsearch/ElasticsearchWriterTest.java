@@ -86,6 +86,18 @@ public class ElasticsearchWriterTest extends ElasticsearchSinkTestBase {
   }
 
   @Test
+  public void testWriterIgnoreSchemaStringRecord() throws Exception {
+    final boolean ignoreKey = true;
+    final boolean ignoreSchema = true;
+
+    String value = "{\"foo\":\"bar\"}";
+    Collection<SinkRecord> records = Collections.singletonList(new SinkRecord(TOPIC, PARTITION, null, key, null, value, 0));
+    ElasticsearchWriter writer = initWriter(client, ignoreKey, ignoreSchema);
+    writeDataAndRefresh(writer, records);
+    verifySearchResults(records, ignoreKey, ignoreSchema);
+  }
+
+  @Test
   public void testTopicIndexOverride() throws Exception {
     final boolean ignoreKey = true;
     final boolean ignoreSchema = true;

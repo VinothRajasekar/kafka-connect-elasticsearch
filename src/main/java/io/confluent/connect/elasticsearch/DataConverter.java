@@ -96,7 +96,13 @@ public class DataConverter {
       value = record.value();
     }
 
-    final String payload = new String(JSON_CONVERTER.fromConnectData(record.topic(), schema, value), StandardCharsets.UTF_8);
+    final String payload;
+    if (schema == null && value instanceof String) {
+      payload = (String) value;
+    } else {
+      payload = new String(JSON_CONVERTER.fromConnectData(record.topic(), schema, value), StandardCharsets.UTF_8);
+    }
+
     final Long version = ignoreKey ? null : record.kafkaOffset();
     return new IndexableRecord(new Key(index, type, id), payload, version);
   }
